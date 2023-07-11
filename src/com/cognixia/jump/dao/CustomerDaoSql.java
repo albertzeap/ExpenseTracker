@@ -1,5 +1,5 @@
 package com.cognixia.jump.dao;
 
-public class CustomerDaoSql implements CustomerDaoInterface {
+public class CustomerDaoSql implements CustomerDao {
 
 }

@@ -19,7 +19,6 @@ CREATE TABLE IF NOT EXISTS customer (
     last_name VARCHAR(30) NOT NULL,
     email VARCHAR(30) NOT NULL UNIQUE,
     password VARCHAR(30) NOT NULL,
-    dob DATE,
     
     FOREIGN KEY(accounts_id) REFERENCES accounts(id)
 );
