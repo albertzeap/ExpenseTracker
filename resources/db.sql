@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS expense(
     accounts_id INT,
     nature VARCHAR(255) DEFAULT 'Other',
     expense_date DATE,
+    price DECIMAL(10,2),
     recurring BOOLEAN DEFAULT 0,
     
     FOREIGN KEY(accounts_id) REFERENCES accounts(id)
@@ -35,9 +36,10 @@ CREATE TABLE IF NOT EXISTS expense(
 
 -- Seed the database
 INSERT INTO accounts (balance, monthly_budget, yearly_budget)
-VALUES (1000.00, 500.00, 6000.00),
-       (2500.00, 1000.00, 12000.00),
-       (500.00, 200.00, 2400.00); 
+VALUES (1000.00, 500.00, 6000.00);
+
+INSERT INTO customer(accounts_id, first_name, last_name, email, password)
+VALUES (1, "Albert", "Paez", "albertzeap@gmail.com", "password");
        
 
 

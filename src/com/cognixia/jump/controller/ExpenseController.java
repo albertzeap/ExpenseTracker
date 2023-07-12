@@ -1,5 +1,9 @@
 package com.cognixia.jump.controller;
 
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
 import java.util.Optional;
 import java.util.Scanner;
@@ -10,8 +14,11 @@ import com.cognixia.jump.dao.AccountDao;
 import com.cognixia.jump.dao.AccountDaoSql;
 import com.cognixia.jump.dao.CustomerDao;
 import com.cognixia.jump.dao.CustomerDaoSql;
+import com.cognixia.jump.dao.ExpenseDao;
+import com.cognixia.jump.dao.ExpenseDaoSql;
 import com.cognixia.jump.model.Account;
 import com.cognixia.jump.model.Customer;
+import com.cognixia.jump.model.Expense;
 import com.cognixia.jump.utility.ColorsUtility;
 
 
@@ -196,6 +203,7 @@ public class ExpenseController {
 			
 			switch (option) {
 			case 1:
+				scan.nextLine();
 				addExpense();
 				break;
 				
@@ -217,8 +225,53 @@ public class ExpenseController {
 			}
 		}
 	}
-
-	private static void displayExpenses() {
+	private static void addExpense() {
+		System.out.println();
+		
+		try {
+			
+			System.out.println(ColorsUtility.ITALIC + "What is the nature of the expense?" + ColorsUtility.RESET);
+			String nature = scan.nextLine();
+			
+			System.out.println(ColorsUtility.ITALIC + "What is the date of the expense?" + ColorsUtility.RESET);
+			String sDate = scan.nextLine();
+			if(!sDate.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
+				throw new InputMismatchException();
+			}
+			// If date can be parsed then the date is a valid date
+			LocalDate.parse(sDate);
+			Date date = Date.valueOf(sDate);
+			
+			System.out.println(ColorsUtility.ITALIC + "What is the cost of the expense?" + ColorsUtility.RESET);
+			BigDecimal price = scan.nextBigDecimal();
+			
+			System.out.println(ColorsUtility.ITALIC + "Is the expense recurring?" + ColorsUtility.RESET);
+			boolean recurring = scan.nextBoolean();
+			
+			ExpenseDao expenseDao = new ExpenseDaoSql();
+			boolean success = expenseDao.createExpense(new Expense(0, activeAccount.getId(), nature, date, price, recurring ), activeAccount);
+			if(success) {
+				System.out.println(ColorsUtility.GREEN + "Expense added successfully!" + ColorsUtility.RESET);
+			} 
+							
+			
+		} catch (InputMismatchException e) {
+			System.out.println(ColorsUtility.RED + "Invalid Input:" + ColorsUtility.RESET);
+			System.out.println(ColorsUtility.RED + "     For price please enter digits only." + ColorsUtility.RESET);
+			System.out.println(ColorsUtility.RED + "     For date please follow format: yyyy-mm-dd" + ColorsUtility.RESET);
+			System.out.println(ColorsUtility.RED + "     For recurring, please enter true or false" + ColorsUtility.RESET);
+			scan.nextLine();
+			
+		} catch(DateTimeParseException e) {
+			System.out.println(ColorsUtility.RED + "Invalid date. Please enter a valid date" + ColorsUtility.RESET);
+			scan.nextLine();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			scan.nextLine();
+		}
+		
+	}
+	private static void removeExpense() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -227,15 +280,12 @@ public class ExpenseController {
 		// TODO Auto-generated method stub
 		
 	}
-
-	private static void removeExpense() {
+	private static void displayExpenses() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private static void addExpense() {
-		// TODO Auto-generated method stub
-		
-	}
+
+
 
 }
