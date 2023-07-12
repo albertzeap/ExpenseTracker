@@ -18,6 +18,7 @@ import com.cognixia.jump.utility.ColorsUtility;
 public class ExpenseController {
 	
 	private static Customer activeUser = new Customer();
+	private static Account activeAccount = new Account();
 	private static Scanner scan = new Scanner(System.in);
 	
 	public static void run() {
@@ -38,8 +39,13 @@ public class ExpenseController {
 		}
 	}
 		
-		
-		
+	public static Account getActiveAccount() {
+		return activeAccount;
+	}
+
+	public static void setActiveAccount(Account activeAccount) {
+		ExpenseController.activeAccount = activeAccount;
+	}
 
 	public static Customer getActiveUser() {
 		return activeUser;
@@ -49,7 +55,7 @@ public class ExpenseController {
 		ExpenseController.activeUser = activeUser;
 	}
 	
-	public static String mainMenu() {
+	private static String mainMenu() {
 		while (true) {
 					
 			System.out.println(ColorsUtility.CYAN_BOLD + "+---------------------+");
@@ -71,7 +77,7 @@ public class ExpenseController {
 		}
 	}
 	
-	public static void registerMenu() {
+	private static void registerMenu() {
 		
 		while(true) {
 
@@ -116,7 +122,8 @@ public class ExpenseController {
 		}
 	}
 	
-	public static void loginMenu() {
+	
+	private static void loginMenu() {
 		System.out.println(ColorsUtility.CYAN_BOLD +"+---------------------+");
 		System.out.println("+------- Login -------+");
 		System.out.println("+---------------------+" + ColorsUtility.RESET);
@@ -135,27 +142,28 @@ public class ExpenseController {
 		}
 	}
 	
-	public static void userMenu() {
+	// Menu to be displayed after user login
+	private static void userMenu() {
 		
 		System.out.println(ColorsUtility.ITALIC + "\nWelcome to your Expense Tracker, " + activeUser.getFirstName() + "!\n" + ColorsUtility.RESET);
 		System.out.println(ColorsUtility.CYAN_BOLD +"+-------------------------+");
 		System.out.println("+----- Your Dashboard ----+");
 		System.out.println("+-------------------------+\n" + ColorsUtility.RESET);
 		
+		// Create an accountDao to connect to the database
 		AccountDao accountDao = new AccountDaoSql();
 		Optional<Account> userAccount = accountDao.getUserAccount(activeUser);
 		if(userAccount.isEmpty()) {
 			System.out.println(ColorsUtility.YELLOW + ColorsUtility.ITALIC + "No active accounts\n" + ColorsUtility.RESET);
+		
+		// Only print out account details if it exists to prevent nullPointerExceptions
 		} else {
+			setActiveAccount(userAccount.get());
 			System.out.printf(ColorsUtility.YELLOW_UNDERLINED + "%-10s %-20s %-8s\n", "Balance", "Monthly Budget", "Yearly Budget" + ColorsUtility.RESET);
-			System.out.printf("%-10s %-20s %-8s\n", userAccount.get().getBalance(), 
-					userAccount.get().getMonthlyBudget(), userAccount.get().getYearlyBudget());			
+			System.out.printf("%-10s %-20s %-8s\n", activeAccount.getBalance(), activeAccount.getMonthlyBudget(), activeAccount.getYearlyBudget());			
 			System.out.println();
 			
 		}
-		
-		
-		
 		
 		int option = 0;
 		
@@ -185,7 +193,49 @@ public class ExpenseController {
 				option = 0;
 				continue;
 			}
+			
+			switch (option) {
+			case 1:
+				addExpense();
+				break;
+				
+			case 2:
+				removeExpense();
+				break;
+			case 3: 
+				setBudget();
+				break;
+			case 4:
+				displayExpenses();
+				break;
+			case 5:
+				System.out.println(ColorsUtility.ITALIC + ColorsUtility.GREEN + "Goodbye!\n"+ ColorsUtility.RESET );
+				scan.nextLine();
+				return;
+			default:
+				continue;
+			}
 		}
+	}
+
+	private static void displayExpenses() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void setBudget() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void removeExpense() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void addExpense() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
