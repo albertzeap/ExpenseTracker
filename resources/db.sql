@@ -33,6 +33,13 @@ CREATE TABLE IF NOT EXISTS expense(
     FOREIGN KEY(accounts_id) REFERENCES accounts(id)
 );
 
+-- Seed the database
+INSERT INTO accounts (balance, monthly_budget, yearly_budget)
+VALUES (1000.00, 500.00, 6000.00),
+       (2500.00, 1000.00, 12000.00),
+       (500.00, 200.00, 2400.00); 
+       
+
 
 
 

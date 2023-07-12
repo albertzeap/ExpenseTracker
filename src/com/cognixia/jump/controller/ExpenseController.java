@@ -6,10 +6,14 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.cognixia.jump.dao.AccountDao;
+import com.cognixia.jump.dao.AccountDaoSql;
 import com.cognixia.jump.dao.CustomerDao;
 import com.cognixia.jump.dao.CustomerDaoSql;
+import com.cognixia.jump.model.Account;
 import com.cognixia.jump.model.Customer;
 import com.cognixia.jump.utility.ColorsUtility;
+
 
 public class ExpenseController {
 	
@@ -137,6 +141,19 @@ public class ExpenseController {
 		System.out.println(ColorsUtility.CYAN_BOLD +"+-------------------------+");
 		System.out.println("+----- Your Dashboard ----+");
 		System.out.println("+-------------------------+\n" + ColorsUtility.RESET);
+		
+		AccountDao accountDao = new AccountDaoSql();
+		Optional<Account> userAccount = accountDao.getUserAccount(activeUser);
+		if(userAccount.isEmpty()) {
+			System.out.println(ColorsUtility.YELLOW + ColorsUtility.ITALIC + "No active accounts\n" + ColorsUtility.RESET);
+		} else {
+			System.out.printf(ColorsUtility.YELLOW_UNDERLINED + "%-10s %-20s %-8s\n", "Balance", "Monthly Budget", "Yearly Budget" + ColorsUtility.RESET);
+			System.out.printf("%-10s %-20s %-8s\n", userAccount.get().getBalance(), 
+					userAccount.get().getMonthlyBudget(), userAccount.get().getYearlyBudget());			
+			System.out.println();
+			
+		}
+		
 		
 		
 		

@@ -1,5 +1,67 @@
 package com.cognixia.jump.model;
 
-public class Account {
+import java.math.BigDecimal;
 
+public class Account {
+	
+	private int id;
+	private BigDecimal balance;
+	private BigDecimal monthlyBudget;
+	private BigDecimal yearlyBudget;
+	
+	
+	public Account() {
+		
+	}
+	
+	public Account(int id, BigDecimal balance, BigDecimal monthlyBudget, BigDecimal yearlyBudget) {
+		super();
+		this.id = id;
+		this.balance = balance;
+		this.monthlyBudget = monthlyBudget;
+		this.yearlyBudget = yearlyBudget;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public BigDecimal getBalance() {
+		return balance;
+	}
+
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
+	}
+
+	public BigDecimal getMonthlyBudget() {
+		return monthlyBudget;
+	}
+
+	public void setMonthlyBudget(BigDecimal monthlyBudget) {
+		this.monthlyBudget = monthlyBudget;
+	}
+
+	public BigDecimal getYearlyBudget() {
+		return yearlyBudget;
+	}
+
+	public void setYearlyBudget(BigDecimal yearlyBudget) {
+		this.yearlyBudget = yearlyBudget;
+	}
+
+	@Override
+	public String toString() {
+		return "Account [id=" + id + ", balance=" + balance + ", monthlyBudget=" + monthlyBudget + ", yearlyBudget="
+				+ yearlyBudget + "]";
+	}
+	
+	
+	
+	
+	
 }

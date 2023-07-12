@@ -1,11 +1,9 @@
 package com.cognixia.jump.model;
 
-import java.time.LocalDateTime;
-
 public class Customer {
 	
 	private int id;
-	private Account account;
+	private int accountId;
 	private String firstName;
 	private String lastName;
 	private String email;
@@ -17,10 +15,10 @@ public class Customer {
 		super();
 	}
 
-	public Customer(int id, Account account, String firstName, String lastName, String email, String password) {
+	public Customer(int id, int accountId, String firstName, String lastName, String email, String password) {
 		super();
 		this.id = id;
-		this.account = account;
+		this.accountId = accountId;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
@@ -35,12 +33,12 @@ public class Customer {
 		this.id = id;
 	}
 
-	public Account getAccount() {
-		return account;
+	public int getAccountId() {
+		return accountId;
 	}
 
-	public void setAccount(Account account) {
-		this.account = account;
+	public void setAccountId(int accountId) {
+		this.accountId = accountId;
 	}
 
 	public String getFirstName() {
@@ -78,7 +76,7 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return "Customer [id=" + id + ", account=" + account + ", firstName=" + firstName + ", lastName=" + lastName
+		return "Customer [id=" + id + ", accountId=" + accountId + ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", email=" + email + ", password=" + password + "]";
 	}
 	

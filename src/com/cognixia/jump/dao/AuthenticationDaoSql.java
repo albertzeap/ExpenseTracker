@@ -26,12 +26,13 @@ public class AuthenticationDaoSql implements AuthenticationDao {
 			while(rs.next()) {
 				
 				int id = rs.getInt("id");
+				int accountId = rs.getInt("accounts_id");
 				String firstName = rs.getString("first_name");
 				String lastName = rs.getString("last_name");
 				String email = rs.getString("email");
 				String custPassword = rs.getString("password");	
 				
-				customer = Optional.of(new Customer(id,null, firstName, lastName, email, custPassword));
+				customer = Optional.of(new Customer(id,accountId, firstName, lastName, email, custPassword));
 			}
 			
 			return customer;
