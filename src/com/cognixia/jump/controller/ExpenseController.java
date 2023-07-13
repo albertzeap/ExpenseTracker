@@ -16,6 +16,7 @@ import com.cognixia.jump.dao.CustomerDao;
 import com.cognixia.jump.dao.CustomerDaoSql;
 import com.cognixia.jump.dao.ExpenseDao;
 import com.cognixia.jump.dao.ExpenseDaoSql;
+import com.cognixia.jump.exception.ResourceNotFoundException;
 import com.cognixia.jump.model.Account;
 import com.cognixia.jump.model.Customer;
 import com.cognixia.jump.model.Expense;
@@ -272,7 +273,30 @@ public class ExpenseController {
 		
 	}
 	private static void removeExpense() {
-		// TODO Auto-generated method stub
+		System.out.println(ColorsUtility.ITALIC + "Which expense would you like to delete?" + ColorsUtility.RESET);
+		
+		try {
+			
+			int expenseId = scan.nextInt();
+			ExpenseDao expenseDao = new ExpenseDaoSql();
+			
+			boolean success = expenseDao.deleteExpense(expenseId, activeAccount);
+			if(!success) {
+				throw new ResourceNotFoundException("Expense ID");
+			}
+			
+			System.out.println(ColorsUtility.GREEN + "Expense removed successfully!" + ColorsUtility.RESET);
+			
+		} catch(InputMismatchException e) {
+			
+			System.out.println(ColorsUtility.RED + "Invalid Input. Please enter the ID of your expense" + ColorsUtility.RESET);
+			scan.nextLine();
+			
+		} catch(ResourceNotFoundException e) {
+			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 

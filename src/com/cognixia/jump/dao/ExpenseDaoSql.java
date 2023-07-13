@@ -22,8 +22,32 @@ public class ExpenseDaoSql implements ExpenseDao {
 			ps.setBigDecimal(4, expense.getPrice());
 			ps.setBoolean(5, expense.isRecurring());
 			
-			boolean success = ps.execute();
-			return success;
+			int success = ps.executeUpdate();
+			if(success > 0) {
+				return true;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return false;
+	}
+
+	@Override
+	public boolean deleteExpense(int expenseId, Account account) {
+
+
+		try(PreparedStatement ps = conn.prepareStatement("DELETE FROM expense WHERE expense.id = ? AND expense.accounts_id = ?  ")) {
+			
+			ps.setInt(1, expenseId);
+			ps.setInt(2, account.getId());
+			
+			int success = ps.executeUpdate();
+			if(success > 0) {
+				return true;
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
