@@ -9,5 +9,8 @@ public interface AccountDao {
 	
 	// GET Methods
 	public Optional<Account> getUserAccount(Customer customer);
+	
+	// SET Methods
+	public boolean setMonthlyBudget(Account account);
 
 }

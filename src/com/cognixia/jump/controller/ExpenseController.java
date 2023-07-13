@@ -179,14 +179,15 @@ public class ExpenseController {
 			
 			System.out.println("1. Add an expense.");
 			System.out.println("2. Remove a canceled expense.");
-			System.out.println("3. Set a monthly budget & yearly budget.");
-			System.out.println("4. View upcoming expenses.");
-			System.out.println("5. Exit.\n");
+			System.out.println("3. Set a monthly budget");
+			System.out.println("4. Set a yearly budget.");
+			System.out.println("5. View upcoming expenses.");
+			System.out.println("6. Exit.\n");
 			System.out.print(ColorsUtility.ITALIC + "Choose an option (1-5): " + ColorsUtility.RESET);
 			
 			try {
 				option = scan.nextInt();
-				if (option < 1 || option > 5) {
+				if (option < 1 || option > 6) {
 					throw new Exception();
 				}
 			}
@@ -212,12 +213,15 @@ public class ExpenseController {
 				removeExpense();
 				break;
 			case 3: 
-				setBudget();
+				setMonthlyBudget();
 				break;
-			case 4:
-				displayExpenses();
+			case 4: 
+				setYearlyBudget();
 				break;
 			case 5:
+				displayExpenses();
+				break;
+			case 6:
 				System.out.println(ColorsUtility.ITALIC + ColorsUtility.GREEN + "Goodbye!\n"+ ColorsUtility.RESET );
 				scan.nextLine();
 				return;
@@ -226,6 +230,7 @@ public class ExpenseController {
 			}
 		}
 	}
+
 	private static void addExpense() {
 		System.out.println();
 		
@@ -300,7 +305,36 @@ public class ExpenseController {
 		
 	}
 
-	private static void setBudget() {
+	private static void setMonthlyBudget() {
+		System.out.println(ColorsUtility.ITALIC + "Which would you like your monthly budget to be?" + ColorsUtility.RESET);
+		
+		try {
+			// Set both monthly and yearly budget based off the monthly budget value
+			BigDecimal monthlyBudget = scan.nextBigDecimal();
+			BigDecimal yearlyBudget = monthlyBudget.multiply(BigDecimal.valueOf(12.00));
+			
+			activeAccount.setMonthlyBudget(monthlyBudget);
+			activeAccount.setYearlyBudget(yearlyBudget);
+			
+			AccountDao accountDao = new AccountDaoSql();
+			boolean success = accountDao.setMonthlyBudget(activeAccount);
+			if(success) {
+				System.out.println(ColorsUtility.GREEN + "Budget set successfully!" + ColorsUtility.RESET);
+			} else {
+				System.out.println(ColorsUtility.RED + "Budget could not be set." + ColorsUtility.RESET);
+			}
+			
+			
+		} catch(InputMismatchException e) { 
+			System.out.println(ColorsUtility.RED + "Invalid Input. Please enter digits" + ColorsUtility.RESET);
+			scan.nextLine();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	private static void setYearlyBudget() {
 		// TODO Auto-generated method stub
 		
 	}

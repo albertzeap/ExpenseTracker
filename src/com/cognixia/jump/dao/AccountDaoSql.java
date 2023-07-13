@@ -46,4 +46,28 @@ public class AccountDaoSql implements AccountDao {
 		return Optional.empty();
 	}
 
+	@Override
+	public boolean setMonthlyBudget(Account account) {
+		
+		try(PreparedStatement ps = conn.prepareStatement("UPDATE accounts SET monthly_budget = ?, yearly_budget = ? WHERE id = ?")) {
+			
+			ps.setBigDecimal(1, account.getMonthlyBudget());
+			ps.setBigDecimal(2, account.getYearlyBudget());
+			ps.setInt(3, account.getId());
+			
+			int count = ps.executeUpdate();
+			if(count > 0) {
+				return true;
+			}
+			
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return false;
+	}
+
 }
