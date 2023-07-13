@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -22,6 +23,8 @@ import com.cognixia.jump.model.Account;
 import com.cognixia.jump.model.Customer;
 import com.cognixia.jump.model.Expense;
 import com.cognixia.jump.utility.ColorsUtility;
+
+
 
 
 public class ExpenseController {
@@ -177,6 +180,10 @@ public class ExpenseController {
 				System.out.printf("%-10s %-20s %-8s\n", activeAccount.getBalance(), activeAccount.getMonthlyBudget(), activeAccount.getYearlyBudget());			
 				System.out.println();
 				
+//				System.out.printf(ColorsUtility.YELLOW_UNDERLINED + "%-10s %-20s %-8s\n", "Balance", "", "Yearly Budget" + ColorsUtility.RESET);
+//				System.out.printf("%-10s %-20s %-8s\n", activeAccount.getBalance(), activeAccount.getMonthlyBudget(), activeAccount.getYearlyBudget());
+				
+				
 			}
 			
 			System.out.println("1. Add an expense.");
@@ -313,7 +320,7 @@ public class ExpenseController {
 		try {
 			// Set both monthly and yearly budget based off the monthly budget value
 			BigDecimal monthlyBudget = scan.nextBigDecimal();
-			BigDecimal yearlyBudget = monthlyBudget.multiply(BigDecimal.valueOf(12.00), RoundingMode.HALF_UP);
+			BigDecimal yearlyBudget = monthlyBudget.multiply(BigDecimal.valueOf(12.00));
 			
 			activeAccount.setMonthlyBudget(monthlyBudget);
 			activeAccount.setYearlyBudget(yearlyBudget);
@@ -367,7 +374,35 @@ public class ExpenseController {
 		
 	}
 	private static void displayExpenses() {
-		// TODO Auto-generated method stub
+		System.out.println(ColorsUtility.CYAN_BOLD +"+-------------------------+");
+		System.out.println("+----- Your Expenses ----+");
+		System.out.println("+-------------------------+\n" + ColorsUtility.RESET);
+		
+		try {
+			
+			ExpenseDao expenseDao = new ExpenseDaoSql();
+			List<Expense> expenses = expenseDao.viewExpenses(activeAccount);
+			if(expenses.isEmpty()) {
+				System.out.println(ColorsUtility.YELLOW + ColorsUtility.ITALIC + "No upcoming expenses\n" + ColorsUtility.RESET);
+			} else {
+				
+				System.out.printf(ColorsUtility.YELLOW_UNDERLINED + "%-10s %-15s %-15s %-15s %-15s %-8s\n", "ID", "Account ID", "Nature", "Date", "Price", "Recurring" + ColorsUtility.RESET);
+				for(Expense expense : expenses) {
+					System.out.printf(ColorsUtility.RESET + "%-10d %-15d %-15s %-15s %-15s %-8s\n", 
+							expense.getId(), 
+							expense.getAccountsId(), 
+							expense.getNature(),
+							expense.getDate(),
+							expense.getPrice(), 
+							expense.isRecurring());
+				}
+				System.out.println(ColorsUtility.RESET);
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		
 	}
 
