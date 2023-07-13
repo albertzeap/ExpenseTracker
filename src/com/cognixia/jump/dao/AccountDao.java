@@ -11,6 +11,6 @@ public interface AccountDao {
 	public Optional<Account> getUserAccount(Customer customer);
 	
 	// SET Methods
-	public boolean setMonthlyBudget(Account account);
+	public boolean setBudget(Account account);
 
 }

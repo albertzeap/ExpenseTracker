@@ -47,7 +47,7 @@ public class AccountDaoSql implements AccountDao {
 	}
 
 	@Override
-	public boolean setMonthlyBudget(Account account) {
+	public boolean setBudget(Account account) {
 		
 		try(PreparedStatement ps = conn.prepareStatement("UPDATE accounts SET monthly_budget = ?, yearly_budget = ? WHERE id = ?")) {
 			

@@ -1,6 +1,7 @@
 package com.cognixia.jump.controller;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -154,28 +155,29 @@ public class ExpenseController {
 	private static void userMenu() {
 		
 		System.out.println(ColorsUtility.ITALIC + "\nWelcome to your Expense Tracker, " + activeUser.getFirstName() + "!\n" + ColorsUtility.RESET);
-		System.out.println(ColorsUtility.CYAN_BOLD +"+-------------------------+");
-		System.out.println("+----- Your Dashboard ----+");
-		System.out.println("+-------------------------+\n" + ColorsUtility.RESET);
-		
-		// Create an accountDao to connect to the database
-		AccountDao accountDao = new AccountDaoSql();
-		Optional<Account> userAccount = accountDao.getUserAccount(activeUser);
-		if(userAccount.isEmpty()) {
-			System.out.println(ColorsUtility.YELLOW + ColorsUtility.ITALIC + "No active accounts\n" + ColorsUtility.RESET);
-		
-		// Only print out account details if it exists to prevent nullPointerExceptions
-		} else {
-			setActiveAccount(userAccount.get());
-			System.out.printf(ColorsUtility.YELLOW_UNDERLINED + "%-10s %-20s %-8s\n", "Balance", "Monthly Budget", "Yearly Budget" + ColorsUtility.RESET);
-			System.out.printf("%-10s %-20s %-8s\n", activeAccount.getBalance(), activeAccount.getMonthlyBudget(), activeAccount.getYearlyBudget());			
-			System.out.println();
-			
-		}
 		
 		int option = 0;
 		
 		while(true) {
+			
+			System.out.println(ColorsUtility.CYAN_BOLD +"+-------------------------+");
+			System.out.println("+----- Your Dashboard ----+");
+			System.out.println("+-------------------------+\n" + ColorsUtility.RESET);
+			
+			// Create an accountDao to connect to the database
+			AccountDao accountDao = new AccountDaoSql();
+			Optional<Account> userAccount = accountDao.getUserAccount(activeUser);
+			if(userAccount.isEmpty()) {
+				System.out.println(ColorsUtility.YELLOW + ColorsUtility.ITALIC + "No active accounts\n" + ColorsUtility.RESET);
+				
+				// Only print out account details if it exists to prevent nullPointerExceptions
+			} else {
+				setActiveAccount(userAccount.get());
+				System.out.printf(ColorsUtility.YELLOW_UNDERLINED + "%-10s %-20s %-8s\n", "Balance", "Monthly Budget", "Yearly Budget" + ColorsUtility.RESET);
+				System.out.printf("%-10s %-20s %-8s\n", activeAccount.getBalance(), activeAccount.getMonthlyBudget(), activeAccount.getYearlyBudget());			
+				System.out.println();
+				
+			}
 			
 			System.out.println("1. Add an expense.");
 			System.out.println("2. Remove a canceled expense.");
@@ -183,7 +185,7 @@ public class ExpenseController {
 			System.out.println("4. Set a yearly budget.");
 			System.out.println("5. View upcoming expenses.");
 			System.out.println("6. Exit.\n");
-			System.out.print(ColorsUtility.ITALIC + "Choose an option (1-5): " + ColorsUtility.RESET);
+			System.out.print(ColorsUtility.ITALIC + "Choose an option (1-6): " + ColorsUtility.RESET);
 			
 			try {
 				option = scan.nextInt();
@@ -306,18 +308,18 @@ public class ExpenseController {
 	}
 
 	private static void setMonthlyBudget() {
-		System.out.println(ColorsUtility.ITALIC + "Which would you like your monthly budget to be?" + ColorsUtility.RESET);
+		System.out.println(ColorsUtility.ITALIC + "What would you like your monthly budget to be?" + ColorsUtility.RESET);
 		
 		try {
 			// Set both monthly and yearly budget based off the monthly budget value
 			BigDecimal monthlyBudget = scan.nextBigDecimal();
-			BigDecimal yearlyBudget = monthlyBudget.multiply(BigDecimal.valueOf(12.00));
+			BigDecimal yearlyBudget = monthlyBudget.multiply(BigDecimal.valueOf(12.00), RoundingMode.HALF_UP);
 			
 			activeAccount.setMonthlyBudget(monthlyBudget);
 			activeAccount.setYearlyBudget(yearlyBudget);
 			
 			AccountDao accountDao = new AccountDaoSql();
-			boolean success = accountDao.setMonthlyBudget(activeAccount);
+			boolean success = accountDao.setBudget(activeAccount);
 			if(success) {
 				System.out.println(ColorsUtility.GREEN + "Budget set successfully!" + ColorsUtility.RESET);
 			} else {
@@ -335,7 +337,33 @@ public class ExpenseController {
 		
 	}
 	private static void setYearlyBudget() {
-		// TODO Auto-generated method stub
+		System.out.println(ColorsUtility.ITALIC + "What would you like your yearly budget to be?" + ColorsUtility.RESET);
+		
+		try {
+			// Set both monthly and yearly budget based off the monthly budget value
+			BigDecimal yearlyBudget = scan.nextBigDecimal();
+			BigDecimal monthlyBudget = yearlyBudget.divide(BigDecimal.valueOf(12.00), RoundingMode.HALF_UP);
+			
+			activeAccount.setMonthlyBudget(monthlyBudget);
+			activeAccount.setYearlyBudget(yearlyBudget);
+			
+			AccountDao accountDao = new AccountDaoSql();
+			boolean success = accountDao.setBudget(activeAccount);
+			if(success) {
+				System.out.println(ColorsUtility.GREEN + "Budget set successfully!" + ColorsUtility.RESET);
+			} else {
+				System.out.println(ColorsUtility.RED + "Budget could not be set." + ColorsUtility.RESET);
+			}
+			
+			
+		} catch(InputMismatchException e) { 
+			System.out.println(ColorsUtility.RED + "Invalid Input. Please enter digits" + ColorsUtility.RESET);
+			scan.nextLine();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		
 	}
 	private static void displayExpenses() {
