@@ -23,6 +23,7 @@ import com.cognixia.jump.model.Account;
 import com.cognixia.jump.model.Customer;
 import com.cognixia.jump.model.Expense;
 import com.cognixia.jump.utility.ColorsUtility;
+import com.cognixia.jump.utility.ConsolePrinterUtility;
 
 
 
@@ -76,7 +77,8 @@ public class ExpenseController {
 			System.out.println("1. Create account");
 			System.out.println("2. Login");
 			System.out.println("3. Exit program\n");
-			System.out.print(ColorsUtility.ITALIC + "Choose an option (1-3): " + ColorsUtility.RESET);
+//			System.out.print(ColorsUtility.ITALIC + "Choose an option (1-3): " + ColorsUtility.RESET);
+			ConsolePrinterUtility.promptOneLine("Choose an option (1-3): ");
 			String choice = scan.nextLine();
 	
 			while (!choice.matches("^[1-3]$")) {
@@ -96,11 +98,14 @@ public class ExpenseController {
 			System.out.println(ColorsUtility.CYAN_BOLD + "+---------------------+");
 			System.out.println("+------ Register -----+");
 			System.out.println("+---------------------+\n" + ColorsUtility.RESET);
-			System.out.print("Enter First Name: ");
+			
+			ConsolePrinterUtility.promptOneLine("Enter First Name: ");
 			String firstName = scan.nextLine();
-			System.out.print("Enter a Last Name: ");
+			
+			ConsolePrinterUtility.promptOneLine("Enter Last Name: ");
 			String lastName = scan.nextLine();
-			System.out.print("Enter an email: ");
+			
+			ConsolePrinterUtility.promptOneLine("Enter an email: ");
 			String username = scan.nextLine();
 			
 			Pattern pattern = Pattern.compile("[a-zA-Z]+[0-9]*[@]{1}[a-zA-Z]+[.]{1}[a-zA-Z]{3}");
@@ -108,17 +113,17 @@ public class ExpenseController {
 
 			while (!matcher.find()) {
 				System.out.println("Not a valid email.\n");
-				System.out.print("Enter email: ");
+				ConsolePrinterUtility.promptOneLine("Enter email: ");
 				username = scan.nextLine();
 				matcher = pattern.matcher(username);
 			}
 
-			System.out.print("Enter a password: ");
+			ConsolePrinterUtility.promptOneLine("Enter a password: ");
 			String password = scan.nextLine();
 
 			while (!password.matches("^.{1,}$")) {
 				System.out.println("Not a valid password.\n");
-				System.out.print("Enter a password: ");
+				ConsolePrinterUtility.promptOneLine("Enter a password: ");
 				password = scan.nextLine();
 			}
 			
@@ -128,6 +133,13 @@ public class ExpenseController {
 				System.out.println(ColorsUtility.RED + "Username already taken.\n" + ColorsUtility.RESET);
 			} else {
 				customerDao.createCustomer(firstName, lastName, username, password);
+				
+				// Find the customer that was just created 
+				Optional<Customer> customer = customerDao.getCustomerByUsername(username);
+				
+				// Create an account for the customer
+				AccountDao accountDao = new AccountDaoSql();
+				accountDao.createAccount(customer.get().getId(),new BigDecimal("0"), new BigDecimal("0"), new BigDecimal("0"));
 				break;
 			}
 			
@@ -172,6 +184,7 @@ public class ExpenseController {
 			Optional<Account> userAccount = accountDao.getUserAccount(activeUser);
 			if(userAccount.isEmpty()) {
 				System.out.println(ColorsUtility.YELLOW + ColorsUtility.ITALIC + "No active accounts\n" + ColorsUtility.RESET);
+				
 				
 				// Only print out account details if it exists to prevent nullPointerExceptions
 			} else {
@@ -233,6 +246,7 @@ public class ExpenseController {
 			case 6:
 				System.out.println(ColorsUtility.ITALIC + ColorsUtility.GREEN + "Goodbye!\n"+ ColorsUtility.RESET );
 				scan.nextLine();
+				setActiveAccount(null);
 				return;
 			default:
 				continue;
@@ -245,10 +259,10 @@ public class ExpenseController {
 		
 		try {
 			
-			System.out.println(ColorsUtility.ITALIC + "What is the nature of the expense?" + ColorsUtility.RESET);
+			ConsolePrinterUtility.prompt("What is the nature of the expense?");
 			String nature = scan.nextLine();
 			
-			System.out.println(ColorsUtility.ITALIC + "What is the date of the expense?" + ColorsUtility.RESET);
+			ConsolePrinterUtility.prompt("What is the date of the expense?");
 			String sDate = scan.nextLine();
 			if(!sDate.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
 				throw new InputMismatchException();
@@ -257,10 +271,10 @@ public class ExpenseController {
 			LocalDate.parse(sDate);
 			Date date = Date.valueOf(sDate);
 			
-			System.out.println(ColorsUtility.ITALIC + "What is the cost of the expense?" + ColorsUtility.RESET);
+			ConsolePrinterUtility.prompt("What is the cost of the expense?");
 			BigDecimal price = scan.nextBigDecimal();
 			
-			System.out.println(ColorsUtility.ITALIC + "Is the expense recurring?" + ColorsUtility.RESET);
+			ConsolePrinterUtility.prompt("Is the expense recurring?");
 			boolean recurring = scan.nextBoolean();
 			
 			ExpenseDao expenseDao = new ExpenseDaoSql();

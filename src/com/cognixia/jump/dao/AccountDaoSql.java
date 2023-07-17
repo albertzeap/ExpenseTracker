@@ -17,20 +17,21 @@ public class AccountDaoSql implements AccountDao {
 	@Override
 	public Optional<Account> getUserAccount(Customer customer) {
 		
-		try(PreparedStatement ps = conn.prepareStatement("SELECT accounts.id, balance, monthly_budget, yearly_budget FROM accounts INNER JOIN customer ON accounts.id = ?;") ) {
+		try(PreparedStatement ps = conn.prepareStatement("select accounts.id, accounts.customer_id, balance, monthly_budget, yearly_budget from accounts join customer ON accounts.customer_id = ?;") ) {
 			
-			ps.setInt(1, customer.getAccountId());
+			ps.setInt(1, customer.getId());
 			
 			ResultSet rs = ps.executeQuery();
 			Optional<Account> exists = Optional.empty();
 			
 			while(rs.next()) {
 				int id = rs.getInt("id");
+				int customerId = rs.getInt("customer_id");
 				BigDecimal balance = rs.getBigDecimal("balance");
 				BigDecimal monthlyBudget = rs.getBigDecimal("monthly_budget");
 				BigDecimal yearlyBudget = rs.getBigDecimal("yearly_budget");
 				
-				exists = Optional.of(new Account(id, balance, monthlyBudget, yearlyBudget));
+				exists = Optional.of(new Account(id, customerId,  balance, monthlyBudget, yearlyBudget));
 			}
 			
 			return exists;
@@ -66,6 +67,28 @@ public class AccountDaoSql implements AccountDao {
 			e.printStackTrace();
 		}
 		
+		
+		return false;
+	}
+
+	@Override
+	public boolean createAccount(int customerId, BigDecimal balance, BigDecimal monthlyBudget, BigDecimal yearlyBudget) {
+		
+		try(PreparedStatement ps = conn.prepareStatement("INSERT INTO accounts VALUES (null, ?, ?, ?, ?) ")) {
+			
+			ps.setInt(1, customerId);
+			ps.setBigDecimal(2, balance);
+			ps.setBigDecimal(3, monthlyBudget);
+			ps.setBigDecimal(4, yearlyBudget);
+			
+			int count = ps.executeUpdate();
+			if(count > 0) {
+				return true;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		return false;
 	}

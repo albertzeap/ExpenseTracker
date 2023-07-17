@@ -15,7 +15,7 @@ public class CustomerDaoSql implements CustomerDao {
 	@Override
 	public boolean createCustomer(String firstName, String lastName, String email, String password) {
 		
-		try(PreparedStatement ps = conn.prepareStatement("INSERT INTO customer VALUES (null, null, ?, ?, ?, ?)")) {
+		try(PreparedStatement ps = conn.prepareStatement("INSERT INTO customer VALUES (null, ?, ?, ?, ?)")) {
 			
 			ps.setString(1, firstName);
 			ps.setString(2, lastName);
@@ -44,13 +44,12 @@ public class CustomerDaoSql implements CustomerDao {
 			
 			while(rs.next()) {
 				int id = rs.getInt("id");
-				int accountId = rs.getInt("accounts_id");
 				String firstName = rs.getString("first_name");
 				String lastName = rs.getString("last_name");
 				String email = rs.getString("email");
 				String custPassword = rs.getString("password");	
 				
-				exists = Optional.of(new Customer(id,accountId, firstName, lastName, email, custPassword));
+				exists = Optional.of(new Customer(id, firstName, lastName, email, custPassword));
 			}
 			
 			return exists;

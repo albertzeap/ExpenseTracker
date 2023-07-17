@@ -3,7 +3,6 @@ package com.cognixia.jump.model;
 public class Customer {
 	
 	private int id;
-	private int accountId;
 	private String firstName;
 	private String lastName;
 	private String email;
@@ -15,10 +14,9 @@ public class Customer {
 		super();
 	}
 
-	public Customer(int id, int accountId, String firstName, String lastName, String email, String password) {
+	public Customer(int id, String firstName, String lastName, String email, String password) {
 		super();
 		this.id = id;
-		this.accountId = accountId;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
@@ -33,13 +31,6 @@ public class Customer {
 		this.id = id;
 	}
 
-	public int getAccountId() {
-		return accountId;
-	}
-
-	public void setAccountId(int accountId) {
-		this.accountId = accountId;
-	}
 
 	public String getFirstName() {
 		return firstName;
@@ -76,7 +67,7 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return "Customer [id=" + id + ", accountId=" + accountId + ", firstName=" + firstName + ", lastName=" + lastName
+		return "Customer [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", email=" + email + ", password=" + password + "]";
 	}
 	
